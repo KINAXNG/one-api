@@ -56,8 +56,11 @@ func (p *BaseProvider) GetFullRequestURL(requestURL string, _ string) string {
 
 // 获取请求头
 func (p *BaseProvider) CommonRequestHeaders(headers map[string]string) {
-	headers["Content-Type"] = p.Context.Request.Header.Get("Content-Type")
-	headers["Accept"] = p.Context.Request.Header.Get("Accept")
+	if p.Context != nil {
+		headers["Content-Type"] = p.Context.Request.Header.Get("Content-Type")
+		headers["Accept"] = p.Context.Request.Header.Get("Accept")
+	}
+
 	if headers["Content-Type"] == "" {
 		headers["Content-Type"] = "application/json"
 	}
@@ -139,7 +142,7 @@ func (p *BaseProvider) GetAPIUri(relayMode int) string {
 func (p *BaseProvider) GetSupportedAPIUri(relayMode int) (url string, err *types.OpenAIErrorWithStatusCode) {
 	url = p.GetAPIUri(relayMode)
 	if url == "" {
-		err = common.StringErrorWrapper("The API interface is not supported", "unsupported_api", http.StatusNotImplemented)
+		err = common.StringErrorWrapperLocal("The API interface is not supported", "unsupported_api", http.StatusNotImplemented)
 		return
 	}
 

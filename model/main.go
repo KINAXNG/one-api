@@ -90,7 +90,7 @@ func chooseDB() (*gorm.DB, error) {
 func InitDB() (err error) {
 	db, err := chooseDB()
 	if err == nil {
-		if viper.GetBool("debug") {
+		if config.Debug {
 			db = db.Debug()
 		}
 		DB = db
@@ -159,6 +159,10 @@ func InitDB() (err error) {
 			return err
 		}
 		err = db.AutoMigrate(&Order{})
+		if err != nil {
+			return err
+		}
+		err = db.AutoMigrate(&Task{})
 		if err != nil {
 			return err
 		}
